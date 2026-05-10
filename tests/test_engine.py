@@ -1,4 +1,5 @@
 import pytest
+import sys
 
 from kimi_mcp_client.config import LoadedConfig
 from kimi_mcp_client.core.engine import AgentEngine
@@ -13,7 +14,7 @@ class StubLLM:
 
 
 def _test_hook() -> HookConfig:
-    return HookConfig(event="tool_call_before", command='python -c "raise SystemExit(0)"')
+    return HookConfig(event="tool_call_before", command=f'{sys.executable} -c "raise SystemExit(0)"')
 
 
 @pytest.mark.asyncio

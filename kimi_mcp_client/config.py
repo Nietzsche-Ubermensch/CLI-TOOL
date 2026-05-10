@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 import os
-import tomllib
-from tomllib import TOMLDecodeError
+try:
+    import tomllib
+    from tomllib import TOMLDecodeError
+except ImportError:  # pragma: no cover
+    import tomli as tomllib  # type: ignore
+    from tomli import TOMLDecodeError  # type: ignore
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List

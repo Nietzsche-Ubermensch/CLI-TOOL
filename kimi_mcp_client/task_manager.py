@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any, Awaitable, Callable
 
 
-@dataclass
+@dataclass(slots=True)
 class TaskRecord:
     id: str
     state: str = "queued"

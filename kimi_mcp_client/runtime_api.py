@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import secrets
 from aiohttp import web
 
 from .task_manager import DurableTaskManager
@@ -15,7 +16,9 @@ def create_app(engine, task_manager: DurableTaskManager | None = None) -> web.Ap
     async def _ensure_auth(request: web.Request) -> web.Response | None:
         if not token:
             return None
-        if request.headers.get("Authorization") != f"Bearer {token}":
+        provided = request.headers.get("Authorization", "")
+        expected = f"Bearer {token}"
+        if not secrets.compare_digest(provided, expected):
             return web.json_response({"error": "unauthorized"}, status=401)
         return None
 

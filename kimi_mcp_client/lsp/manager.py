@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import shutil
 from pathlib import Path
 
@@ -35,7 +36,8 @@ class LspManager:
         client = await self._ensure_client(file_path)
         if client is None:
             return
-        await client.request("textDocument/didOpen", {"textDocument": {"uri": f"file://{file_path}", "languageId": "text", "version": 1, "text": Path(file_path).read_text(encoding="utf-8")}})
+        text = await asyncio.to_thread(Path(file_path).read_text, encoding="utf-8")
+        await client.request("textDocument/didOpen", {"textDocument": {"uri": f"file://{file_path}", "languageId": "text", "version": 1, "text": text}})
 
     def add_diagnostics(self, diags: list[Diagnostic]) -> None:
         rendered = render_diagnostics(diags)

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import shlex
+import shutil
 
 from ..sandbox.execpolicy import Action, PermissionEngine
 from .spec import ToolResult
@@ -20,6 +21,8 @@ async def shell_tool(args: dict, permission_engine: PermissionEngine | None = No
         return ToolResult(content=f"Invalid command: {exc}", is_error=True)
     if not argv:
         return ToolResult(content="Empty command", is_error=True)
+    if shutil.which(argv[0]) is None:
+        return ToolResult(content=f"Executable not found: {argv[0]}", is_error=True)
     proc = await asyncio.create_subprocess_exec(
         *argv,
         stdout=asyncio.subprocess.PIPE,

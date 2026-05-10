@@ -24,7 +24,7 @@ async def run_streaming_turn(
         if chunk.text:
             text_chunks.append(chunk.text)
 
-    combined = "\n".join(text_chunks).strip()
+    combined = "".join(text_chunks).strip()
     if not combined:
         turn.response = ""
         return ""

@@ -42,7 +42,10 @@ class OpenAICompatibleClient(AbstractLLMClient):
                 json=payload,
             ) as response:
                 response.raise_for_status()
-                async for raw_line in response.content:
+                while True:
+                    raw_line = await response.content.readline()
+                    if not raw_line:
+                        break
                     line = raw_line.decode("utf-8", errors="ignore").strip()
                     if not line:
                         continue
