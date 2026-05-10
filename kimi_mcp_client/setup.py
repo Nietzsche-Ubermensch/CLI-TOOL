@@ -28,11 +28,13 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.11",
     install_requires=[
         "aiohttp>=3.8.0",
         "pydantic>=2.0.0",
         "python-dotenv>=1.0.0",
+        "rich>=13.0.0",
+        "prompt_toolkit>=3.0.0",
     ],
     extras_require={
         "dev": [
@@ -43,7 +45,8 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "kimi-mcp=kimi_mcp_client.cli:main",
+            "kimi=kimi_mcp_client.main:main",
+            "kimi-mcp=kimi_mcp_client.main:main",
         ],
     },
 )

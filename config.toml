@@ -293,3 +293,33 @@ level = "warn"
 log_to_file = true
 log_file_path = "~/.kimi/logs/kimi.log"
 max_log_size_mb = 5
+
+# ─── DEEPSEEK-TUI ALIGNED CLI RUNTIME ─────────────────────────────────────────
+[model]
+provider = "kimi"
+name = "moonshot-v1-128k"
+base_url = "https://api.moonshot.cn/v1"
+
+[lsp]
+enabled = true
+poll_after_edit_ms = 5000
+max_diagnostics_per_file = 20
+include_warnings = false
+
+[sandbox]
+enabled = false
+platform = "auto"
+
+[runtime_api]
+enabled = false
+host = "127.0.0.1"
+port = 8765
+
+[[hooks]]
+event = "tool_call_before"
+command = "echo 'Running: $TOOL_NAME'"
+matcher = "shell"
+
+[permissions]
+"~/.env" = "ask"
+"src/**" = "allow"
