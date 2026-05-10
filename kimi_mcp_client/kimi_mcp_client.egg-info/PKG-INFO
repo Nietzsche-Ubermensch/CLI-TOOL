@@ -1,4 +1,4 @@
-Metadata-Version: 2.4
+Metadata-Version: 2.1
 Name: kimi-mcp-client
 Version: 1.0.0
 Summary: 8-server MCP orchestration for Kimi CLI
@@ -15,23 +15,7 @@ Classifier: Programming Language :: Python :: 3.10
 Classifier: Programming Language :: Python :: 3.11
 Requires-Python: >=3.8
 Description-Content-Type: text/markdown
-Requires-Dist: aiohttp>=3.8.0
-Requires-Dist: pydantic>=2.0.0
-Requires-Dist: python-dotenv>=1.0.0
 Provides-Extra: dev
-Requires-Dist: pytest>=7.0.0; extra == "dev"
-Requires-Dist: pytest-asyncio>=0.21.0; extra == "dev"
-Requires-Dist: rich>=13.0.0; extra == "dev"
-Dynamic: author
-Dynamic: author-email
-Dynamic: classifier
-Dynamic: description
-Dynamic: description-content-type
-Dynamic: home-page
-Dynamic: provides-extra
-Dynamic: requires-dist
-Dynamic: requires-python
-Dynamic: summary
 
 # Kimi MCP Client
 
