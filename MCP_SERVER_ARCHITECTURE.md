@@ -1,7 +1,7 @@
 # MCP Server Architecture
 
 ## Overview
-The Kimi MCP client uses a modular, config-driven architecture based on the Model Context Protocol (MCP). It allows seamless integration with multiple external tools (Linear, Slack, Notion, Perplexity, GitHub, etc.) through a unified Python interface.
+The Kimi MCP client uses a modular, config-driven architecture based on the Model Context Protocol (MCP). It integrates the implemented server set (`firecrawl`, `perplexity`, `linear`, `github`, `brave`, `chrome`, `playwright`, `context7`) through a unified Python interface.
 
 Servers are defined externally (via npx or Python) and orchestrated by the client.
 
@@ -13,17 +13,33 @@ Servers are defined externally (via npx or Python) and orchestrated by the clien
   ```json
   {
     "mcpServers": {
-      "linear": {
+      "firecrawl": {
         "command": "npx",
-        "args": ["-y", "@modelcontextprotocol/server-linear"],
-        "env": { "LINEAR_API_KEY": "${LINEAR_API_KEY}" }
+        "args": ["-y", "@mendableai/firecrawl-mcp-server"],
+        "env": { "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}" }
       },
-      "slack": { ... },
-      "notion": { ... }
+      "brave-search": {
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+        "env": { "BRAVE_API_KEY": "${BRAVE_API_KEY}" }
+      },
+      "chrome-devtools": {
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
+      },
+      "fetch": {
+        "type": "streamable_http",
+        "url": "${MODELSCOPE_MCP_URL}",
+        "headers": { "Authorization": "Bearer ${MODELSCOPE_API_KEY}" }
+      }
     }
   }
   ```
-- Supports environment variable substitution.
+- `KimiMCPClient._load_config()` parses JSON only; it does **not** expand `${VAR}` placeholders.
+- Current key mapping differences:
+  - Config key `brave-search` maps to in-process client server key `brave`.
+  - Config key `chrome-devtools` maps to in-process client server key `chrome`.
+  - Config key `fetch` is not currently registered in `_server_registry()`.
 - Easy to extend by adding new server entries.
 
 ### 2. KimiMCPClient (client.py)
@@ -40,13 +56,13 @@ Servers are defined externally (via npx or Python) and orchestrated by the clien
 - Abstract base class for all servers.
 - Responsibilities:
   - Config storage
-  - Shared `aiohttp.ClientSession` management (lazy, with timeout)
+  - Per-server shared `aiohttp.ClientSession` management (lazy, with timeout)
   - Request metrics (`request_count`, `last_used`)
   - Abstract `health_check()` method (must be implemented by subclasses)
   - Resource cleanup via `close()`
 
 ### 4. Specific Server Implementations (servers/*.py)
-- Each server (e.g., `LinearServer`, `SlackServer`) inherits from `BaseMCPServer`.
+- Each server (e.g., `LinearServer`, `GitHubServer`, `FirecrawlServer`) inherits from `BaseMCPServer`.
 - Implements `health_check()`.
 - Exposes domain-specific methods that interact with the underlying MCP server.
 - Communication typically via stdio or HTTP depending on the MCP server implementation.
@@ -57,7 +73,7 @@ Servers are defined externally (via npx or Python) and orchestrated by the clien
 3. Method calls routed through server classes to the external MCP process.
 4. Results returned synchronously or via async patterns.
 
-## Extending with New Servers (e.g., Slack, Notion)
+## Extending with New Servers
 1. Add entry to `mcp_config.json`.
 2. Create `NewServer` class in `servers/new_server.py` inheriting `BaseMCPServer`.
 3. Implement `health_check()`.
