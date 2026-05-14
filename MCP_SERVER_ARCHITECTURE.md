@@ -35,11 +35,11 @@ Servers are defined externally (via npx or Python) and orchestrated by the clien
     }
   }
   ```
-- The repository config uses `${VAR}` placeholders, but `KimiMCPClient._load_config()` parses JSON only; placeholder expansion must happen before/outside this method.
+- The repository config uses `${VAR}` placeholders; in the current Python client flow these values are treated as plain strings unless another layer resolves them first.
 - Current key mapping differences:
   - Config key `brave-search` maps to in-process client server key `brave`.
   - Config key `chrome-devtools` maps to in-process client server key `chrome`.
-  - Config key `fetch` is shown because it exists in the current `mcp_config.json`, but it is not currently registered in `_server_registry()`.
+  - Config key `fetch` is included to mirror the current `mcp_config.json`, but only registry-mapped keys are initialized by the Python client today.
 - Easy to extend by adding new server entries.
 
 ### 2. KimiMCPClient (client.py)
